@@ -4,6 +4,8 @@
   </a>
 </p>
 
+[![NPM Version][npm-image]][npm-url]
+[![NPM Downloads][downloads-image]][downloads-url]
 
 Find easily nodes in xml by dot notation and return with function powers
 
