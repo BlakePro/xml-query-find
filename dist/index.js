@@ -277,9 +277,10 @@ const extractJsonDotNotation = (json, extract, attributeKey = attributeInitialKe
 
               //Stop for if there is a result
               let typeResult = typeof result
+              {}
               if(typeResult == 'number' && result > 0)break
-              else if(typeResult == 'string' && result == '')break
-              else if(typeResult == 'object' && result.length == 0)break
+              else if(typeResult == 'string' && result != '')break
+              else if(typeResult == 'object' && result.length > 0)break
 
             }
           }
