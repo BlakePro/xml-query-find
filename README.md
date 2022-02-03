@@ -1,4 +1,9 @@
-![Xml query find dot notation](xml-query-find.png)
+<p align="center">
+  <a href="https://github.com/BlakePro/WhatsAppApiNodeJS">
+    <img src="xml-query-find.png" alt="Xml query find by dot notation" width="400" height="200">
+  </a>
+</p>
+
 
 Find easily nodes in xml by dot notation and return with function powers
 
