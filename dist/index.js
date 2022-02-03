@@ -11,9 +11,9 @@ const attributeInitalSearch = '_find';
     .find
 */
 
-
 const recursiveTags = (flat, arrayTags, array = [], attributeSearch = attributeInitalSearch) => {
   if(arrayTags.length > 0){
+
     let tag = arrayTags[0]
     arrayTags.shift()
 
@@ -183,6 +183,7 @@ const extractJsonDotNotation = (json, extract, attributeKey = attributeInitialKe
 
               //Recursive
               let arrayTags = tags.split('.')
+
               let recursive = recursiveTags(flat, arrayTags)
               let arrayResult = recursive.array
               let stringResult = recursive.string
@@ -265,7 +266,6 @@ const extractJsonDotNotation = (json, extract, attributeKey = attributeInitialKe
                     if(typeof recursive[type] !== 'undefined')result = recursive[type]
                     else result = stringResult
                 }
-                //console.log({type, stringResult, lastSting, arrtags, format, result});
 
               }else{
                 let lenArrayResult = arrayResult.length
@@ -274,6 +274,13 @@ const extractJsonDotNotation = (json, extract, attributeKey = attributeInitialKe
                 else result = stringResult
               }
               data[key] = result
+
+              //Stop for if there is a result
+              let typeResult = typeof result
+              if(typeResult == 'number' && result > 0)break
+              else if(typeResult == 'string' && result == '')break
+              else if(typeResult == 'object' && result.length == 0)break
+
             }
           }
         }

@@ -1,5 +1,5 @@
 <p align="center">
-  <a href="https://github.com/BlakePro/WhatsAppApiNodeJS">
+  <a href="https://github.com/BlakePro">
     <img src="xml-query-find.png" alt="Xml query find by dot notation" width="400" height="200">
   </a>
 </p>
@@ -29,7 +29,7 @@ yarn add @blakepro/xml-query-find
 
 ## 👉🏻 Usage
 ```js
-const { convertXmlToJson, extractJsonDotNotation, extractXmlDotNotation } = require('@blakepro/xml-query-find');
+const { convertXmlToJson, transformJsonFlat, extractJsonDotNotation, extractXmlDotNotation } = require('@blakepro/xml-query-find');
 ```
 
 
