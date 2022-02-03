@@ -1,6 +1,6 @@
 {
   "name": "@blakepro/xml-query-find",
-  "version": "1.1.1",
+  "version": "1.1.2",
   "description": "Find easily nodes in xml by dot notation and return with powers",
   "author": "Cristian Yosafat Hernández Ruiz",
   "homepage": "https://github.com/BlakePro/xml-query-find",
