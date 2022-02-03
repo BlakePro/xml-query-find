@@ -1,6 +1,6 @@
 ![Xml query find dot notation](xml-query-find.png)
 
-Find easily nodes in xml by dot notation and return with powers
+Find easily nodes in xml by dot notation and return with function powers
 
 ## 👉🏻 Features
   * Easy parsing by dot
