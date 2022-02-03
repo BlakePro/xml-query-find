@@ -19,12 +19,12 @@ This is a [Node.js](https://nodejs.org/en/) module available through the
 
 ##### Npm
 ```bash
-npm install xml-query-find
+npm i @blakepro/xml-query-find
 ```
 
 ##### Yarn
 ```bash
-yarn add xml-query-find
+yarn add @blakepro/xml-query-find
 ```
 
 ## 👉🏻 Usage
