@@ -1,16 +1,16 @@
 <p align="center">
   <a href="https://github.com/BlakePro">
-    <img src="xml-query-find.png" alt="Xml query find by dot notation" width="400" height="200">
+    <img src="xml-query-find-2.png" alt="Xml query find dot notation" width="400" height="200">
   </a>
 </p>
 
-Easily Find nodes in XML by dot notation and return with powers
+Find content in Xml by dot notation and return values or array
 
 ## 👉🏻 Features
   * Easy parsing by dot
   * Find in arrays
   * Typed results
-  * Results with powers
+  * Include functions
 
 
 ## 👉🏻 Installation
@@ -26,12 +26,6 @@ npm i @blakepro/xml-query-find
 ```bash
 yarn add @blakepro/xml-query-find
 ```
-
-## 👉🏻 Usage
-```js
-const { _json, _query } = require('@blakepro/xml-query-find');
-```
-
 
 ## 💥 Typed and functions
 |Type|Function|Parameter|Parameter|
@@ -56,6 +50,10 @@ const { _json, _query } = require('@blakepro/xml-query-find');
 |array|substring_upper|start|end|
 |array|substring_lower|start|end|
 
+## 👉🏻 Usage
+```js
+const { _json, _query } = require('@blakepro/xml-query-find');
+```
 
 ## 👨🏻‍💻 👩🏼‍💻 Example
 ```js

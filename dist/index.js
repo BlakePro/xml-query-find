@@ -1,7 +1,7 @@
 const xmljs = require('xml-js');
 const _ = require('lodash');
 const attributeInitialKey = '_attr';
-const attributeInitalSearch = '_find';
+const attributeInitalSearch = '._find.';
 
 /*
   Key node attributes
@@ -11,83 +11,54 @@ const attributeInitalSearch = '_find';
     .find
 */
 
-const recursiveTags = (flat, arrayTags, array = [], attributeSearch = attributeInitalSearch) => {
-  if(arrayTags.length > 0){
+const _recursive = (json, tags, type, array = []) => {
+  let toSearch = tags.split(attributeInitalSearch)
 
-    let tag = arrayTags[0]
-    arrayTags.shift()
-
-    flat = _.get(flat, tag, arrayTags)
-    if(typeof flat !== 'undefined' && typeof arrayTags[1] !== 'undefined'){
-      let newTag = arrayTags[1]
-
-      if(typeof arrayTags[0] !== 'undefined' && arrayTags[0] == attributeSearch){
-        arrayTags.shift()
-        let find = arrayTags[0]
-        let res = []
-        for(let k in flat){
-          let item = flat[k]
-          itemFind = findKeyInObject(find, item)
-          if(typeof itemFind !== 'undefined')res.push(itemFind)
+  if(toSearch.length > 1){
+  
+    let oldTag = toSearch?.[0]
+    let newJson = _.get(json, oldTag)
+    toSearch.shift()
+    let newTags = toSearch.join('.')
+    
+    if(type == 'array'){
+      if(_.isArray(newJson) && newJson.length > 0){
+        for(let item of newJson){
+          array.push(_.get(item, newTags) )
         }
-        array = res
-        flat = findKeyInObject(arrayTags[0], flat, array)
-        arrayTags.shift()
-
-      }else tag = `${tag}.${newTag}`
-
-      arrayTags.shift()
-
-      return recursiveTags(flat, arrayTags, array)
+      }else{
+        array.push( _.get(newJson, newTags) )
+      }
+    }else{
+      return _recursive(newJson, newTags, type, array)
     }
   }
-  return { string: flat, array }
+  string = _.get(json, tags)
+  return { string, array }
 }
 
-
-const findKeyInObject = (key, object) => {
-  if(_.isObject(object)){
-    var value
-    Object.keys(object).some(k => {
-      if(k === key){
-        value = object[k]
-        return true
-      }
-      if(object[k] && _.isObject(object[k])){
-        value = findKeyInObject(key, object[k])
-        return value !== undefined
-      }
-    })
-    return value
+const _format = (str, format) => {
+  if(_.isString(str)){
+    if(format == 'upper')str = str.toUpperCase()
+    else if(format == 'lower')str = str.toLowerCase()
+    else if(format == 'capitalize')str = str.replace(/\w\S*/g, (w) => (w.replace(/^\w/, (c) => c.toUpperCase())))
   }
-  return
+  return str
 }
 
-
-const transformJsonFlat = (json, attributeKey = attributeInitialKey) => {
-  try{
-    let flat = _.flatMap(json, item => item)[0]
-    let main = {}
-    _.flatMap(flat[attributeKey], (key, item) => main[item] = key)
-    delete flat[attributeKey]
-
-    let flatMain = {}
-    for(let tag in flat){
-      let elem = flat[tag]
-      if(_.isObject(elem)){
-        let flatTag =_.flatMap(elem, item => item)
-        if(flatTag.length == 1)flatTag = flatTag[0]
-        flatMain[tag] = flatTag
-      }
+const _sum = array => {
+  let sum = 0
+  if(_.isArray(array) && array.length > 0){
+    for(let number of array){
+      number = parseFloat(number)
+      if(isNaN(number))number = 0
+      sum += number
     }
-    return {...main, ...flatMain}
-  }catch(e){
-    console.log('Not a valid JSON')
   }
-  return {}
+  return sum
 }
 
-const convertXmlToJson = (xml, removeInKey = [], attributeKey = attributeInitialKey) => {
+const _json = (xml, removeInKey = [], attributeKey = attributeInitialKey) => {
   let json = {}
   if(xml != ''){
     try{
@@ -116,52 +87,27 @@ const convertXmlToJson = (xml, removeInKey = [], attributeKey = attributeInitial
   return json
 }
 
-const formatResult = (str, format) => {
-  if(_.isString(str)){
-    if(format == 'upper')str = str.toUpperCase()
-    else if(format == 'lower')str = str.toLowerCase()
-    else if(format == 'capitalize')str = capitalize(str)
-  }
-  return str
-}
-
-const sumArray = array => {
-  let sum = 0
-  if(_.isArray(array) && array.length > 0){
-    for(let number of array){
-      number = parseFloat(number)
-      if(isNaN(number))number = 0
-      sum += number
-    }
-  }
-  return sum
-}
-
-const capitalize = string => {
-  return string.replace(/\w\S*/g, (w) => (w.replace(/^\w/, (c) => c.toUpperCase())))
-}
-
-const extractJsonDotNotation = (json, extract, attributeKey = attributeInitialKey) => {
+const _query = (json, extract) => {
   let response = {}
   let data = {}
   if(_.isObject(extract)){
     try{
-      let flat = transformJsonFlat(json, attributeKey)
-      if(_.isObject(flat)){
+      if(_.isObject(json)){
         for(let key in extract){
-          let itemQuery = extract[key]
+          let itemQuery = extract?.[key]
           let query = itemQuery?.query
-
+          
           if(_.isArray(query) && query.length > 0){
 
             let type = itemQuery?.type
+
             if(_.isString(type))type = type.toLowerCase()
             else type = ''
 
             let format = itemQuery?.function
             if(_.isString(format))format = format.toLowerCase()
             else format = ''
-
+            
             //Replace Options
             let str_find = itemQuery?.find
             if(!_.isString(str_find))str_find = ''
@@ -179,12 +125,9 @@ const extractJsonDotNotation = (json, extract, attributeKey = attributeInitialKe
 
             //Array Tags
             for(let tags of query){
+
               tags = tags.toLowerCase()
-
-              //Recursive
-              let arrayTags = tags.split('.')
-
-              let recursive = recursiveTags(flat, arrayTags)
+              let recursive = _recursive(json, tags, type) 
               let arrayResult = recursive.array
               let stringResult = recursive.string
               let result
@@ -206,7 +149,7 @@ const extractJsonDotNotation = (json, extract, attributeKey = attributeInitialKe
                   case 'string':
                     result = typeof lastSting === 'object' ? lastSting : stringResult
 
-                    if(['capitalize', 'lower', 'upper'].includes(format))result = formatResult(result, format)
+                    if(['capitalize', 'lower', 'upper'].includes(format))result = _format(result, format)
                     else if(format == 'replace')result = result.replaceAll(str_find, str_replace)
                     else if(format == 'substring')result = result.substring(num_start, num_end)
                     else if(format == 'substring_lower')result = result.substring(num_start, num_end).toLowerCase()
@@ -233,27 +176,27 @@ const extractJsonDotNotation = (json, extract, attributeKey = attributeInitialKe
                             else if(format == 'substring')str = str.substring(num_start, num_end)
                             else if(format == 'substring_lower')str = str.substring(num_start, num_end).toLowerCase()
                             else if(format == 'substring_upper')str = str.substring(num_start, num_end).toUpperCase()
-                            else str = formatResult(str, format)
+                            else str = _format(str, format)
                             arr.push(str)
                           }
                         }
                         result = arr
 
                       }else if(format == 'sum'){
-                        result = sumArray(arrayResult)
+                        result = _sum(arrayResult)
 
                       }else if(format == 'count'){
                         result = arrayResult.length
 
                       }else if(format == 'average'){
-                        let sum = sumArray(arrayResult)
+                        let sum = _sum(arrayResult)
                         let len = arrayResult.length
                         result = sum / len
 
                       }else{
                         for(let str of arrayResult){
                           if(_.isString(str)){
-                            str = formatResult(str, format)
+                            str = _format(str, format)
                             arr.push(str)
                           }
                         }
@@ -287,7 +230,8 @@ const extractJsonDotNotation = (json, extract, attributeKey = attributeInitialKe
       }
 
       for(let key in extract){
-        response[key] = typeof data[key] === 'undefined' ? '' : data[key]
+        let elem = data[key]
+        response[key] = typeof elem === 'undefined' ? '' : elem
       }
 
     }catch(e){
@@ -297,14 +241,7 @@ const extractJsonDotNotation = (json, extract, attributeKey = attributeInitialKe
   return response
 }
 
-const extractXmlDotNotation = (xml, extract, removeInKey = [], attributeKey = attributeInitialKey) => {
-  let json = convertXmlToJson(xml, removeInKey, attributeKey)
-  return extractJsonDotNotation(json, extract, attributeKey)
-}
-
 module.exports = {
-  convertXmlToJson: convertXmlToJson,
-  transformJsonFlat: transformJsonFlat,
-  extractJsonDotNotation: extractJsonDotNotation,
-  extractXmlDotNotation: extractXmlDotNotation
+  _json: _json,
+  _query: _query,
 };
