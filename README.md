@@ -4,13 +4,13 @@
   </a>
 </p>
 
-Find easily nodes in xml by dot notation and return with function powers
+Easily Find nodes in XML by dot notation and return with powers
 
 ## 👉🏻 Features
   * Easy parsing by dot
   * Find in arrays
-  * Typed for results
-  * Power with functions
+  * Typed results
+  * Results with powers
 
 
 ## 👉🏻 Installation
@@ -29,7 +29,7 @@ yarn add @blakepro/xml-query-find
 
 ## 👉🏻 Usage
 ```js
-const { convertXmlToJson, transformJsonFlat, extractJsonDotNotation, extractXmlDotNotation } = require('@blakepro/xml-query-find');
+const { _json, _query } = require('@blakepro/xml-query-find');
 ```
 
 
@@ -37,14 +37,12 @@ const { convertXmlToJson, transformJsonFlat, extractJsonDotNotation, extractXmlD
 |Type|Function|Parameter|Parameter|
 |-|-|-|-|
 |number||||
-|||||
 |string||||
 |string|upper|||
 |string|lower||
 |string|capitalize||
 |string|replace|find|replace|
 |string|substring|start|end|
-|||||
 |array||||
 |array|number|||
 |array|count|||
@@ -61,7 +59,7 @@ const { convertXmlToJson, transformJsonFlat, extractJsonDotNotation, extractXmlD
 
 ## 👨🏻‍💻 👩🏼‍💻 Example
 ```js
-const { extractXmlDotNotation } = require('@blakepro/xml-query-find');
+const { _json, _query } = require('@blakepro/xml-query-find');
 
 let xml = `<note>
   <to>Love tech</to>
@@ -80,117 +78,112 @@ let xml = `<note>
   </my-contacts>
 </note>`
 
-let removeInKey = ['my-']
+let remove = ['my-']
 
-let extractList = {
+let extract = {
   to: {
-    query: ['to'],
+    query: ['note.to._attr'],
     type: 'string'
   },
   to_upper: {
-    query: ['to'],
+    query: ['note.to._attr'],
     type: 'string',
     function: 'upper'
   },
   to_lower: {
-    query: ['to'],
+    query: ['note.to._attr'],
     type: 'string',
     function: 'lower'
   },
-  to_upper: {
-    query: ['to'],
-    type: 'string',
-    function: 'upper'
-  },
   to_replace: {
-    query: ['to'],
+    query: ['note.to._attr'],
     type: 'string',
     function: 'replace',
     find: 't',
     replace: '@'
   },
   to_substring: {
-    query: ['to'],
+    query: ['note.to._attr'],
     type: 'string',
     function: 'substring',
     start: 0,
     end: 1
   },
   to_substring_upper: {
-    query: ['to'],
+    query: ['note.to._attr'],
     type: 'string',
     function: 'substring_upper',
     start: 0,
     end: 1
   },
   to_capitalize: {
-    query: ['to'],
+    query: ['note.to._attr'],
     type: 'string',
     function: 'capitalize'
   },
   numbers: {
-    query: ['numbers._find._attr'],
+    query: ['note.numbers.number._find._attr'],
     type: 'array'
   },
   numbers_to_number: {
-    query: ['numbers._find._attr'],
+    query: ['note.numbers.number._find._attr'],
     type: 'array',
     function: 'number'
   },
   numbers_count: {
-    query: ['numbers._find._attr'],
+    query: ['note.numbers.number._find._attr'],
     type: 'array',
     function: 'count'
   },
   numbers_sum: {
-    query: ['numbers._find._attr'],
+    query: ['note.numbers.number._find._attr'],
     type: 'array',
     function: 'sum'
   },
   numbers_average: {
-    query: ['numbers._find._attr'],
+    query: ['note.numbers.number._find._attr'],
     type: 'array',
     function: 'average'
   },
   type: {
-    query: ['contacts._find.type'],
+    query: ['note.contacts.contact._find._attr.type'],
     type: 'array',
   },
   names: {
-    query: ['contacts._find.name'],
+    query: ['note.contacts.contact._find._attr.name'],
     type: 'array',
   },
   names_upper: {
-    query: ['contacts._find.name'],
+    query: ['note.contacts.contact._find._attr.name'],
     type: 'array',
     function: 'upper'
   },
   names_capitalized: {
-    query: ['contacts._find.name'],
+    query: ['note.contacts.contact._find._attr.name'],
     type: 'array',
     function: 'capitalize'
   },
   names_substring: {
-    query: ['contacts._find.name'],
+    query: ['note.contacts.contact._find._attr.name'],
     type: 'array',
     function: 'substring',
     start: 0,
     end: 3
   },
   names_substring_upper: {
-    query: ['contacts._find.name'],
+    query: ['note.contacts.contact._find._attr.name'],
     type: 'array',
     function: 'substring_upper',
     start: 0,
     end: 2
   },
   phone: {
-    query: ['contacts._find.phone'],
+    query: ['note.contacts.contact._find._attr.phone'],
     type: 'array',
     function: 'capitalize'
   },
   phone_replace: {
-    query: ['contacts._find.phone'],
+    query: ['note.contacts.contact._find._attr.phone'],
     type: 'array',
     function: 'replace',
     find: '[.:-]',
@@ -198,9 +191,11 @@ let extractList = {
   }
 }
 
-let extracted = extractXmlDotNotation(xml, extractList, removeInKey)
+let json = _json(xml, remove)
+console.log(json)
 
-console.log(extracted)
+let data = _query(json, extract)
+console.log(data)
 ```
 
 ## 😎 Results
